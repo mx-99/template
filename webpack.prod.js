@@ -3,36 +3,46 @@ const { merge } = require("webpack-merge");
 const common = require("./webpack.common.js");
 const TerserPlugin = require("terser-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 
 module.exports = merge(common, {
-  mode: "production",
+  mode: "production",  // Set the mode to production
 
-  // Optimization settings (for production)
+  // Optimization settings for JavaScript and CSS
   optimization: {
     minimize: true,
-    minimizer: [new TerserPlugin()],
+    minimizer: [
+      new TerserPlugin({
+        parallel: true,  // Use multiple cores for minification
+      }),
+      new CssMinimizerPlugin(),  // Minify CSS
+    ],
   },
 
-  // Output settings (production specific)
+  // Output settings
   output: {
-    filename: "bundle.[contenthash].js", // Hashing the output for cache busting
-    clean: true, // Clean dist folder before each build
+    filename: "bundle.[contenthash].js",  // Use content hash for cache busting
+    path: path.resolve(__dirname, "dist"),
+    clean: true,  // Clean the dist folder before each build
   },
 
-  // Module rules for production (e.g., extracting CSS)
+  // Module rules for processing files
   module: {
     rules: [
       {
-        test: /\.css$/,
-        use: [MiniCssExtractPlugin.loader, "css-loader"],
+        test: /\.css$/i,
+        use: [
+          MiniCssExtractPlugin.loader,  // Extract CSS into separate files
+          "css-loader",  // Process CSS files
+        ],
       },
     ],
   },
 
-  // Plugins for production (e.g., minifying CSS)
+  // Plugins
   plugins: [
     new MiniCssExtractPlugin({
-      filename: "[name].[contenthash].css",
+      filename: "[name].[contenthash].css",  // Content hashed CSS file
     }),
   ],
 });
