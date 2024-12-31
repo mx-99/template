@@ -1,6 +1,8 @@
+const path = require("path");
 const { merge } = require("webpack-merge");
 const common = require("./webpack.common.js");
 const webpack = require("webpack");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 module.exports = merge(common, {
   mode: "development",
@@ -9,11 +11,7 @@ module.exports = merge(common, {
 
   // Development server configuration
   devServer: {
-    contentBase: path.join(__dirname, "dist"),
-    watchFiles: ["./src/template.html"],
-    port: 3000,
-    hot: true, // Enables hot module replacement
-    open: true, // Automatically opens the browser
+    watchFiles: ["./src/index.html"],
   },
 
   // Module settings for development
@@ -36,9 +34,9 @@ module.exports = merge(common, {
   // Enable Hot Module Replacement (HMR)
   plugins: [
     new HtmlWebpackPlugin({
-      template: "./src/template.html",
+      template: "./src/index.html",
     }),
     new webpack.HotModuleReplacementPlugin(),
   ],
-  plugins: [new webpack.HotModuleReplacementPlugin()],
+  //plugins: [new webpack.HotModuleReplacementPlugin()],
 });
